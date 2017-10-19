@@ -1,0 +1,10 @@
+FROM redis:3.2
+
+# docker build  -t redis -f redis/Dockerfile6380 .
+
+COPY redis/redis6380.conf /usr/local/etc/redis/redis.conf
+EXPOSE 6380
+RUN mkdir /var/lib/redis
+RUN chmod -R 777 /var/lib/redis
+CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+#CMD [ "redis-server"]
