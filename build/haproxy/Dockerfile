@@ -14,7 +14,7 @@
 #                                       1.  increased maxconn to 220
 #####################################################################################
 # build as follows:
-# docker build --no-cache=true -t haproxy-1.7.1 -f haproxy/Dockerfile .
+# docker build --no-cache=true -t mylamp/haproxy -f build/haproxy/Dockerfile .
 
 FROM haproxy:1.7.1
 

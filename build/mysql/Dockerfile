@@ -19,7 +19,7 @@
 
 ########
 # build as follows:
-# docker build  -t sql5.7-0.3 -f mysql/Dockerfile-sql-5.7 .
+# docker build --no-cache=true -t mylamp/logrotate -f build/mysql/Dockerfile .
 
 FROM mysql:5.7
 ADD mysql/mysql-docker.cnf /etc/mysql/conf.d/z99-docker.cnf

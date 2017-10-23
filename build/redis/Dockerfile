@@ -1,6 +1,7 @@
-FROM redis:3.2
+FROM redis:4.0.2
 
-# docker build  -t redis -f redis/Dockerfile .
+# build as follows:
+# docker build --no-cache=true -t mylamp/redis -f build/redis/Dockerfile .
 
 # CHANGELOG
 # 3.2-0.2     - Release Date      : 08-06-2017

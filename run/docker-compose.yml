@@ -9,44 +9,28 @@ version: '2'
 
 services:
   haproxy:
-    container_name: lamp-haproxy
-    image: 10.70.7.207:5000/dev/haproxy:1.7.1-0.7
+    image: mylamp/haproxy
     links:
       - web:web
       - sql:sql
-      - nodejs:nodejs
     ports:
       - "80:80"
-      - "8001:8001"
       - "33306:33306"
       - "8282:8282"
     depends_on:
       - web
-    networks:
-      mynet:
-        ipv4_address: 172.21.239.9
     restart: unless-stopped
-  memcached:
-       restart: unless-stopped
-       container_name: lamp-memcached
-       image: 10.70.7.207:5000/dev/memcached:1.4.35-0.1
-
 
   redis:
-        container_name: lamp-redis
+        image: mylamp/redis
         restart: unless-stopped
-        image: 10.70.7.207:5000/dev/redis:4.0.2-0.1
         ports:
           - "6379:6379"
-
         volumes_from:
           - redis-data-dev
-  session-cache:
-         container_name: lamp-session-cache
-         image: 10.70.7.207:5000/dev/memcached:1.4.35-0.1
 
   sql:
-      container_name: lamp-sql
+      image: mylamp/sql
       restart: unless-stopped
       image: 10.70.7.207:5000/dev/sql:5.7-0.4
       ports:
@@ -56,29 +40,24 @@ services:
       environment:
         MYSQL_ROOT_PASSWORD: 123
 
+
   web:
-     extends:
-        file: igc/base.yml
-        service: base
-     container_name: lamp-web
-     image: 10.70.7.207:5000/dev/php:7.1.2-0.12
+     image: mylamp/web
      ports:
        - "8080:8080"
      privileged: true
      links:
        - sql:sql
-       - memcached:memcached
-       - session-cache:session-cache
        - redis:redis
-       - nodejs:nodejs
+
      volumes:
       - ${HTTPD_LOGPATH}:/var/log/apache2/
       - ${APACHE_HOSTS}:/etc/apache2/sites-enabled
       - ${WEB_VOLUMEPATH}:/var/www/
-      - ${CANVAS_APP_LOGPATH}:/var/log/igc/app
+      - ${CANVAS_APP_LOGPATH}:/var/log/app
       - ${WEB_PROJECTASSETS}:/project_assets/
       - ${BASH_HISTORY}:/root/.bash_history
-      - ${BASH_HISTORY}:/home/igc/.bash_history
+
       - /var/run/docker.sock:/var/run/docker.sock
 
 
@@ -91,26 +70,25 @@ services:
 #volumes  **********************************************************************************************
   redis-data-dev:
     container_name: lamp-redis-data
-    image: 10.70.7.207:5000/dev/busybox:latest
+    image: mylamp/busybox-private
     volumes:
       - ${REDIS_DATAPATH}:/var/lib/redis
   db-data-dev:
-      container_name: lamp-db-data
-      image: 10.70.7.207:5000/dev/busybox:latest
+      image: mylamp/busybox-private
+      container_name: lamp-db-data-dev
       volumes:
         - ${DB_DATAPATH}:/var/lib/mysql
 #volumes end **********************************************************************************************
 
 #tools **********************************************************************************************
   phpmyadmin-dev:
-     image: 10.70.7.207:5000/tools/phpmyadmin:0.1
+     image: phpmyadmin/phpmyadmin
      container_name: phpmyadmin-dev
      restart: unless-stopped
      ports:
-      - 8084:80
+      - 8085:80
      volumes:
-      - /sessions
-      - ./igc/conf/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+      - ./conf/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
   portainer:
       image: portainer/portainer
       container_name: portainer
@@ -119,13 +97,13 @@ services:
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
   phpredmin:
-          image: sasanrose/phpredmin
-          links:
-              - redis:redis
-          environment:
-              - PHPREDMIN_DATABASE_REDIS_0_HOST=redis
-          ports:
-              - "9016:80"
+      image: sasanrose/phpredmin
+      links:
+        - redis:redis
+      environment:
+        - PHPREDMIN_DATABASE_REDIS_0_HOST=redis
+      ports:
+        - "9016:80"
 
   selenium:
     container_name: lamp-selenium
@@ -139,27 +117,27 @@ services:
           - SELENIUM_HUB_PORT=4444
           - NOVNC=true
 
-  logrotate:
-      image:  10.70.7.207:5000/tools/logrotate:3.10.3
-      container_name: lamp-logrotate
-      volumes:
-        - /var/lib/docker/containers:/var/lib/docker/containers
-        - ${CANVAS_APP_LOGPATH}:/var/log/igc/app
-        - ${CANVAS_NODE_LOGPATH}:/var/log/igc/node
-        - ${HTTPD_LOGPATH}:/var/log/igc/apache
-        - ${CANVAS_APP_LOGPATH5}:/var/log/igc/app5
-        - ${HTTPD_LOGPATH5}:/var/log/igc/apache5
-      restart: always
-      environment:
-        - LOGS_DIRECTORIES=/var/lib/docker/containers
-        - ALL_LOGS_DIRECTORIES= /var/log/igc
-        - LOGROTATE_COPIES=4
-        - LOGROTATE_SIZE=10M
-        - LOGROTATE_INTERVAL=weekly
-        #- LOGROTATE_CRONSCHEDULE=*/60 * * * *
-        - LOGROTATE_PARAMETERS=v
-        - LOGROTATE_STATUSFILE=/logrotate-status/logrotate.status
-        - LOG_FILE=/logs/cron.log
-        - LOGROTATE_COMPRESSION=compress
+#  logrotate:
+#      image:  10.70.7.207:5000/tools/logrotate:3.10.3
+#      container_name: lamp-logrotate
+#      volumes:
+#        - /var/lib/docker/containers:/var/lib/docker/containers
+#        - ${CANVAS_APP_LOGPATH}:/var/log/igc/app
+#        - ${CANVAS_NODE_LOGPATH}:/var/log/igc/node
+#        - ${HTTPD_LOGPATH}:/var/log/igc/apache
+#        - ${CANVAS_APP_LOGPATH5}:/var/log/igc/app5
+#        - ${HTTPD_LOGPATH5}:/var/log/igc/apache5
+#      restart: always
+#      environment:
+#        - LOGS_DIRECTORIES=/var/lib/docker/containers
+#        - ALL_LOGS_DIRECTORIES= /var/log/igc
+#        - LOGROTATE_COPIES=4
+#        - LOGROTATE_SIZE=10M
+#        - LOGROTATE_INTERVAL=weekly
+#        #- LOGROTATE_CRONSCHEDULE=*/60 * * * *
+#        - LOGROTATE_PARAMETERS=v
+#        - LOGROTATE_STATUSFILE=/logrotate-status/logrotate.status
+#        - LOG_FILE=/logs/cron.log
+#        - LOGROTATE_COMPRESSION=compress
 
 #tools end **********************************************************************************************

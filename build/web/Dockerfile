@@ -29,8 +29,7 @@
 #####################################################################################
 #####################################################################################
 # build as follows:
-# docker build --build-arg LOCAL_USER_ID=`id -u $USER` --no-cache=true -t igc-web-apache2.4.php7.1.2 -f web/DockerfileApache7 .
-# tag : docker tag ********** 10.70.7.207:5000/dev/php:7.1.2-*.**
+# docker build --build-arg LOCAL_USER_ID=`id -u $USER` --no-cache=true  -t mylamp/web -f build/web/Dockerfile .
 
 
 FROM php:7.1.2-apache

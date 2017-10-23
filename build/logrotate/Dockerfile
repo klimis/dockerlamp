@@ -14,10 +14,9 @@
 # 3.10.3     - Release Date      : 02-08-2017
 #            - New               : remove delaycompress option
 #####################################################################################
+
 # build as follows:
-# docker build --no-cache=true -t logrotate-3.10.0 -f logrotate/Dockerfile .
-# tag : docker tag *********** 10.70.7.207:5000/tools/logrotate:3.10.3
-# docker push 10.70.7.207:5000/tools/logrotate:3.10.3
+# docker build --no-cache=true -t mylamp/logrotate -f build/logrotate/Dockerfile .
 
 FROM blacklabelops/alpine:3.5
 MAINTAINER Steffen Bleul <sbl@blacklabelops.com>
