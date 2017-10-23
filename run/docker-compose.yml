@@ -82,7 +82,7 @@ services:
 
 #tools **********************************************************************************************
   phpmyadmin-dev:
-     image: phpmyadmin/phpmyadmin
+     image: mylamp/phpmyadmin
      container_name: phpmyadmin-dev
      restart: unless-stopped
      ports:
@@ -116,28 +116,3 @@ services:
     environment:
           - SELENIUM_HUB_PORT=4444
           - NOVNC=true
-
-#  logrotate:
-#      image:  10.70.7.207:5000/tools/logrotate:3.10.3
-#      container_name: lamp-logrotate
-#      volumes:
-#        - /var/lib/docker/containers:/var/lib/docker/containers
-#        - ${CANVAS_APP_LOGPATH}:/var/log/igc/app
-#        - ${CANVAS_NODE_LOGPATH}:/var/log/igc/node
-#        - ${HTTPD_LOGPATH}:/var/log/igc/apache
-#        - ${CANVAS_APP_LOGPATH5}:/var/log/igc/app5
-#        - ${HTTPD_LOGPATH5}:/var/log/igc/apache5
-#      restart: always
-#      environment:
-#        - LOGS_DIRECTORIES=/var/lib/docker/containers
-#        - ALL_LOGS_DIRECTORIES= /var/log/igc
-#        - LOGROTATE_COPIES=4
-#        - LOGROTATE_SIZE=10M
-#        - LOGROTATE_INTERVAL=weekly
-#        #- LOGROTATE_CRONSCHEDULE=*/60 * * * *
-#        - LOGROTATE_PARAMETERS=v
-#        - LOGROTATE_STATUSFILE=/logrotate-status/logrotate.status
-#        - LOG_FILE=/logs/cron.log
-#        - LOGROTATE_COMPRESSION=compress
-
-#tools end **********************************************************************************************

@@ -78,4 +78,3 @@ $cfg['Servers'][$i]['AllowNoPassword']     = TRUE;
 $i++;
 
 
-
